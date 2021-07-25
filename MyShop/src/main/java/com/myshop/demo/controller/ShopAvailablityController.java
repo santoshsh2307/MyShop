@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.myshop.demo.DTO.ApponimentShopAvailalbilityDTO;
 import com.myshop.demo.entity.Appointments;
 import com.myshop.demo.entity.ShopAvailablity;
+import com.myshop.demo.entity.ShopDetails;
 import com.myshop.demo.service.AppointmentService;
 import com.myshop.demo.service.ShopAvailabilityService;
+import com.myshop.demo.service.ShopService;
 import com.myshop.demo.util.DateConversion;
 
 @RestController
@@ -28,6 +30,9 @@ public class ShopAvailablityController {
 
 	@Autowired
 	AppointmentService appService;
+	
+	@Autowired
+	ShopService shopSer;
 
 	@PostMapping(value = "/saveShopAvailability")
 	public HashMap<String, Object> saveShopAvailability(@RequestBody ApponimentShopAvailalbilityDTO sa) {
@@ -52,7 +57,8 @@ public class ShopAvailablityController {
 			LocalTime to = LocalTime.parse(sa.getLogoutTime().toString());
 			while (!from.isAfter(to)) {
 				// System.out.println(from);
-				for (int i = 0; i < sa.getNoOfSheet(); i++) {
+				ShopDetails shopData = shopSer.findShopById(sa.getShopId());
+				for (int i = 0; i < Long.parseLong(shopData.getNoOfSheets()); i++) {
 					Appointments app = new Appointments();
 					app.setAppDate(fromDate);
 					app.setAppTime(from);
